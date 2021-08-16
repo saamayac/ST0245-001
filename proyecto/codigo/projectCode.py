@@ -3,6 +3,7 @@
 #span class="css-truncate css-truncate-target d-block width-fit"><a class="js-navigation-open Link--primary" title=
 import urllib.request
 from collections import deque
+import time
 
 class Webscraping:
     def __init__(self, url):
@@ -34,10 +35,11 @@ class Webscraping:
                 vectorDinamico.insert(0,x)
         return vectorDinamico
 
-    def specialPrint(self,vector):
+    def specialPrint(vector):
         #print arrays 
         for i in vector:
             print(i)
+            time.sleep(0.5)
 
     def __scraping__(self,vector):
         #gets the title of the image of the page
@@ -74,47 +76,73 @@ class ImagesCsv:
         self.setImageList(url)
         self.setImage(subUrl)
 
-    def __getImage__(self,subUrl):
+    def __getImageCsv__(self,subUrl):
         #get the csv file and turns it in to a list compose of lists
-        #in other words a matrix 
+        #in other words a matrix returns a matrix of the csv
         self.setImage(subUrl)
         web = Webscraping(self.__url__)
-        
         web.download()
-        
         text = web.read()
         lineas = text.split("\n")
         list01 = [[int(i) for i in linea if i != ","]for linea in lineas ]
         return list01
 
 
-    def getImageList(self,url,vector):
+    def getImageCsvList(self,url,vector):
         self.setImageList(url)
+        mainList = deque()
         for name in vector[0:len(vector)-3]:
             
-            mainList = deque()
-            mainList.insert(0,self.__getImage__(name))
-            print(self.geturl())
+            mainList.insert(0,self.__getImageCsv__(name))
+            #print(self.geturl())
+        return mainList
             
 
 def main ():
-    webSick = Webscraping("https://github.com/mauriciotoro/ST0245-Eafit/tree/master/proyecto/datasets/csv/enfermo_csv")
-    webSick.download() 
-    vectorSick = webSick.scrappedvector()
-    webHealthy = Webscraping("https://github.com/mauriciotoro/ST0245-Eafit/tree/master/proyecto/datasets/csv/sano_csv")
-    webHealthy.download()
-    vectorHealty = webHealthy.scrappedvector()
-    #test01(vectorSick,vectorHealty)
+    cow = Cow()
+    cow.generalCows("enfermo_csv")
+    cow.generalCows("sano_csv")
+
+
     
-    images = ImagesCsv()
-    images.getImageList("enfermo_csv",vectorSick)
-    
+class Cow:
+    def __init__(self):
+        self.__baseUrl__ = "https://github.com/mauriciotoro/ST0245-Eafit/tree/master/proyecto/datasets/csv/"
+        self.__url__ = self.__baseUrl__
+
+    def setUrl(self,file):
+        self.__url__ = self.__baseUrl__ + file
+
+    def generalCows(self,file):
+
+        self.setUrl(file)
+
+        print("getting links...",end = "")
+        web = Webscraping(self.__url__)
+        web.download() 
+        vector = web.scrappedvector()
+        print(" done")
+        
+        images = ImagesCsv()
+        print("saving "+  file + "...", end = "")
+        cowsImagesCsv = images.getImageCsvList(file,vector)
+        print(" done")
+
+        #code
+
+        print("clearing "+  file + "...", end = "")
+        cowsImagesCsv.clear()
+        print(" done")
+
+
 
 def test01(vector1,vector2):
     print(vector1)
-    Webscraping.specialPrint(vector1)
-    Webscraping.specialPrint(vector2)
+    Webscraping.specialPrint(vector = vector1)
+    Webscraping.specialPrint(vector = vector2)
     
+
+
 
 main()
 
