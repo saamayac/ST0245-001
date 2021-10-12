@@ -198,7 +198,8 @@ class General:
         for i in (vector[:-3]):#change
             
             matrixImagenCsv = image.getImageCsv(i)
-            compresedMatrix = cos.CDT_Decompression(cos.CDT_Compression(matrixImagenCsv))
+            compresedMatrix = cos.CDT_Compression(matrixImagenCsv)
+            decompresedMatrix = cos.CDT_Decompression(compresedMatrix)
 
             '''
             print (matrixImagenCsv)
